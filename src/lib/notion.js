@@ -29,6 +29,14 @@ function richTextToHtml(richTexts) {
       if (rt.annotations?.strikethrough) text = `<del>${text}</del>`;
       if (rt.annotations?.code) text = `<code>${text}</code>`;
       if (rt.annotations?.underline) text = `<u>${text}</u>`;
+      if (rt.annotations?.color && rt.annotations.color !== 'default') {
+        const color = rt.annotations.color;
+        if (color.endsWith('_background')) {
+          text = `<span style="background-color: var(--notion-${color.replace('_background', '')}-bg)">${text}</span>`;
+        } else {
+          text = `<span style="color: var(--notion-${color})">${text}</span>`;
+        }
+      }
       if (rt.href) text = `<a href="${escapeHtml(rt.href)}" target="_blank" rel="noopener">${text}</a>`;
       return text;
     })
