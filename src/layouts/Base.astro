@@ -1,0 +1,50 @@
+---
+interface Props {
+  title?: string;
+  description?: string;
+  activePage?: string;
+}
+
+const { title = '成昊 | Cheng Hao', description = '成昊的个人网站 — 产品思考、创造记录、终身学习', activePage = 'home' } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  </head>
+  <body>
+    <header class="header">
+      <div class="header-inner">
+        <a href="/" class="logo">
+          <span class="logo-cn">成昊</span>
+          <span class="logo-sub">chenghao</span>
+        </a>
+        <nav class="nav">
+          <a href="/" class:list={[{ active: activePage === 'home' }]}>文章</a>
+          <a href="/about" class:list={[{ active: activePage === 'about' }]}>关于</a>
+        </nav>
+      </div>
+    </header>
+
+    <slot />
+
+    <footer class="footer">
+      <span class="footer-text">© 2026 成昊 · 用好奇心构建世界</span>
+      <div class="footer-links">
+        <a href="#">X</a>
+        <a href="#">小红书</a>
+        <a href="#">邮箱</a>
+      </div>
+    </footer>
+  </body>
+</html>
+
+<style is:global>
+  @import '../styles/global.css';
+</style>

@@ -1,0 +1,75 @@
+---
+import Base from '../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+import { getTitle, getSelect, getRichText, getDate, formatDate } from '../lib/properties';
+
+const allPosts = await getCollection('posts');
+
+const posts = allPosts
+  .map((entry) => {
+    const props = entry.data.properties;
+    return {
+      id: entry.id,
+      title: getTitle(props?.Name || props?.title || props?.Title),
+      tag: getSelect(props?.Tag || props?.Tags || props?.tag),
+      date: getDate(props?.Date || props?.date),
+      summary: getRichText(props?.Summary || props?.summary),
+      status: getSelect(props?.Status || props?.status),
+    };
+  })
+  .filter((p) => p.title)
+  .sort((a, b) => {
+    if (!a.date) return 1;
+    if (!b.date) return -1;
+    return new Date(b.date).getTime() - new Date(a.date).getTime();
+  });
+---
+
+<Base activePage="home">
+  <!-- Hero -->
+  <section class="hero">
+    <h1 class="hero-name">
+      <span class="cn">成昊</span>
+      <span class="sep">|</span>
+      <span class="en">Cheng Hao</span>
+    </h1>
+    <p class="hero-tagline">产品经理 · 创造者 · 终身学习者</p>
+    <p class="hero-bio">
+      我是成昊，一个对世界充满好奇心的产品经理。白天构建商业产品，夜晚探索自己的创意想法。我相信好的产品源于对人的理解，而好的人生源于持续的创造。这里是我记录思考、分享作品、与世界对话的地方。
+    </p>
+  </section>
+
+  <div class="divider"><div class="divider-line"></div></div>
+
+  <!-- Posts -->
+  <section class="section">
+    <div class="section-header">
+      <h2 class="section-title">近期文章</h2>
+    </div>
+
+    {posts.length > 0 ? (
+      <div>
+        {posts.map((post) => (
+          <a href={`/posts/${post.id}`} class="post-item">
+            <div class="post-meta">
+              {post.tag && <span class="post-tag">{post.tag}</span>}
+              {post.date && <span class="post-date">{formatDate(post.date)}</span>}
+            </div>
+            <h3 class="post-title">{post.title}</h3>
+            {post.summary && <p class="post-summary">{post.summary}</p>}
+            <div class="post-read-more">
+              阅读全文
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M3 8h10M9 4l4 4-4 4" />
+              </svg>
+            </div>
+          </a>
+        ))}
+      </div>
+    ) : (
+      <div class="empty-state">
+        <p>还没有文章。去 Notion 写下你的第一篇吧！</p>
+      </div>
+    )}
+  </section>
+</Base>

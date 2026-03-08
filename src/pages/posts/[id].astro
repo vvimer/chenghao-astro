@@ -1,0 +1,52 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+import { getTitle, getSelect, getRichText, getDate, formatDate } from '../../lib/properties';
+import { getPageBlocks, blocksToHtml } from '../../lib/notion';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts');
+  return posts.map((entry) => ({
+    params: { id: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const props = entry.data.properties;
+
+const title = getTitle(props?.Name || props?.title || props?.Title);
+const tag = getSelect(props?.Tag || props?.Tags || props?.tag);
+const date = getDate(props?.Date || props?.date);
+const summary = getRichText(props?.Summary || props?.summary);
+
+// Fetch and render page content
+let contentHtml = '';
+try {
+  const blocks = await getPageBlocks(entry.id);
+  contentHtml = blocksToHtml(blocks);
+} catch (e) {
+  contentHtml = '<p>内容加载失败，请稍后再试。</p>';
+}
+---
+
+<Base title={`${title} | 成昊`} description={summary}>
+  <article class="article-page">
+    <a href="/" class="article-back">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M13 8H3M7 4L3 8l4 4" />
+      </svg>
+      返回文章列表
+    </a>
+
+    <header class="article-header">
+      <div class="post-meta">
+        {tag && <span class="post-tag">{tag}</span>}
+        {date && <span class="post-date">{formatDate(date)}</span>}
+      </div>
+      <h1 class="article-title">{title}</h1>
+    </header>
+
+    <div class="article-body" set:html={contentHtml} />
+  </article>
+</Base>

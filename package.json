@@ -1,0 +1,15 @@
+{
+  "name": "chenghao-blog",
+  "type": "module",
+  "version": "2.0.0",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "astro": "^5.7.0",
+    "notion-astro-loader": "^0.4.0",
+    "@notionhq/client": "^2.2.0"
+  }
+}
